@@ -28,30 +28,30 @@ class MyClientRepository implements MyClientRepositoryInterface
     public function create(array $data)
     {
         $client = $this->model->create($data);
-        
+
         $this->storeInRedis($client);
-        
+
         return $client;
     }
 
     public function update($id, array $data)
     {
         $client = $this->find($id);
-        
+
         if (isset($data['client_logo']) && $client->client_logo !== 'no-image.jpg') {
             Storage::disk('s3')->delete($client->client_logo);
         }
-        
+
         $client->update($data);
-        
+
         $this->deleteFromRedis($client->slug);
-        
+
         if (isset($data['slug'])) {
             $this->deleteFromRedis($client->getOriginal('slug'));
         }
-        
+
         $this->storeInRedis($client);
-        
+
         return $client;
     }
 
@@ -59,19 +59,19 @@ class MyClientRepository implements MyClientRepositoryInterface
     {
         $client = $this->find($id);
         $slug = $client->slug;
-        
+
         $client->delete();
-        
+
         $this->deleteFromRedis($slug);
-        
+
         return true;
     }
-    
+
     protected function storeInRedis($client)
     {
         Redis::set($client->slug, json_encode($client->toArray()));
     }
-    
+
     protected function deleteFromRedis($slug)
     {
         Redis::del($slug);

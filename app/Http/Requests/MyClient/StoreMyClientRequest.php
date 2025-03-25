@@ -26,7 +26,7 @@ class StoreMyClientRequest extends FormRequest
             'is_project' => 'required|in:0,1',
             'self_capture' => 'required|in:0,1',
             'client_prefix' => 'required|string|max:4',
-            'client_logo' => 'nullable|image|max:2048',
+            'client_logo' => 'required|image|max:2048',
             'address' => 'nullable|string',
             'phone_number' => 'nullable|string|max:50',
             'city' => 'nullable|string|max:50',
